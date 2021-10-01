@@ -20,8 +20,8 @@ TEST_CASE("test", "[]")
     for (const auto& towar : towary) {
         const auto zaglowce = transportujFlota(towar);
 
-        CHECK(zaglowce == CountThis< Zaglowiec >::get()); // wartoœæ zwrócona
-        CHECK(towar <= Stocznia::getTotalCap()); // przewieziony towar
+        CHECK(zaglowce == CountThis< Zaglowiec >::get()); // wartoœsc zwrocona
+        CHECK(towar <= Stocznia::getTotalCap());          // przewieziony towar
 
         CountThis< Zaglowiec >::reset();
         Stocznia::resetTotalCap();
