@@ -4,9 +4,9 @@
 Na tych zajęciach zaznajomimy się z dziedziczeniem oraz dynamicznym (wirtualnym) polimorfizmem.
 Są to podstawowe narzędzia programowania obiektowego, którym zawdzięcza ono w dużej mierze swoją popularność.
 Pozwalają one na pisanie przejrzystego kodu i konstruowanie łatwych w użyciu interfejsów.
-Dodajmy jednak, że współcześnie w C\+\+ odchodzi się od tych metod na rzecz statycznych (tzn. rozstrzyganych w czasie kompilacji) rozwiązań.
+Dodajmy jednak, że współcześnie w C++ odchodzi się od tych metod na rzecz statycznych (tzn. rozstrzyganych w czasie kompilacji) rozwiązań.
 Powodem tej zmiany jest ich koszt w wydajności programu.
-Warto je jednak znać, szczególnie, że w wielu przypadkach czytelność kodu może być ważniejsza od kilku milisekund czasu wykonania.
+Warto je jednak znać, szczególnie, że w wielu przypadkach czytelność kodu może być ważniejsza od kilku nanosekund czasu wykonania.
 
 ## Dziedziczenie
 Dziedziczenie jest prostym, ale bardzo potężnym konceptem.
@@ -14,12 +14,14 @@ Sprowadza się do następującej zasady: jeżeli klasa `D` dziedziczy po klasie 
 Mówiąc ściślej, obiekt typu `D` zawiera w sobie podobiekt klasy `B`.
 Pozwala nam to na uproszczenie struktury kodu poprzez komponowanie nowych klas z już istniejących.
 Na przykład, jeżeli mamy klasy `Ołówek` i `Gumka`, to chcąc zaimplementować klasę reprezentującą ołówek z gumką na końcu, możemy po prostu stworzyć pustą klasę, która dziedziczy po `Ołówek` i `Gumka`.
+
 ```C++
 class Ołówek { /* ... */ };
 class Gumka  { /* ... */ };
 
 class OłówekZGumką : public Ołówek, public Gumka {};
 ```
+
 Tego typu strategię możemy znaleźć w [bibliotece I/O](https://en.cppreference.com/w/cpp/io).
 Klasy strumieni dziedziczą po odpowiednich klasach bazowych w zależności od tego czy mają być strumieniami wejścia, wyjścia, czy obu.
 
@@ -45,7 +47,7 @@ Nie trudno wyobrazić sobie, że dla większych klas taki zabieg pozwala zaoszcz
 W przykładzie powyżej, w konstruktorach klas pochodnych zmuszeni byliśmy używać settera pola klasy bazowej, gdyż było ono prywatne.
 Wygodniej nam jednak operować bezpośrednio na zmiennej.
 Z drugiej strony, nie chcemy wystawiać tej zmiennej bezpośrednio do użytkownika.
-Rozwiązaniem tego dylematu jest trzeci (i ostatni) specyfikator dostępu w C\+\+: `protected` (chroniony).
+Rozwiązaniem tego dylematu jest trzeci (i ostatni) specyfikator dostępu w C++: `protected` (chroniony).
 Pola chronione mogą być czytane i modyfikowane przez metody klas, które dziedziczą po klasie, do której chronione pole należy, ale nie przez żadne inne.
 
 #### Zadanie 5
@@ -93,6 +95,7 @@ Ogólny schemat tworzenia obiektu wygląda więc nieco inaczej, niż ten przedst
 5. Wykonywane jest ciało konstruktora
 
 W kodzie wygląda to następująco:
+
 ```C++
 class B1 { /* ... */ };
 class B2 { /* ... */ };
@@ -127,10 +130,12 @@ Jak widzimy, wszędzie, gdzie spodziewamy się obiektu klasy bazowej, możemy po
 Dzieje się tak dzięki niejawnemu rzutowaniu *w górę* hierarchii dziedziczenia (tzn. w stronę klasy bazowej), które wykonuje za nas kompilator.
 Rzutowanie takie możemy także wykonać jawnie, za pomocą konwersji `static_cast`.
 Wygląda ona następująco:
+
 ```C++
 Pochodna p;
 Baza b = static_cast< Baza >( p );
 ```
+
 Rzutować w ten sposób możemy także wskaźniki oraz referencje.
 
 #### Zadanie 10
@@ -143,7 +148,7 @@ Czy wołana jest ta sama metoda?
 Jak sama nazwa wskazuje, w statycznym polimorfizmie typy, przy pomocy których interpretujemy obiekty, muszą być znane w czasie kompilacji.
 Powiemy teraz jak decydować o typach obiektów w czasie wykonania programu.
 Językiem, który do tego wykorzystamy będą wskaźniki i referencje.
-Jeżeli nie będzie do końca jasne, czemu tak postępujemy, zachęcamy czytelnika do zawieszenia swojego sceptycyzmu do kolejnego rozdziału, w którym pokażemy praktyczne aplikacje przedstawionej tutaj metodologii i wszelkie wątpliwości zostaną rozwiane (a przynajmniej taka jest nadzieja autora).
+Jeżeli nie będzie do końca jasne, czemu tak postępujemy, zachęcamy czytelnika do zawieszenia swojego sceptycyzmu do kolejnego rozdziału, w którym pokażemy praktyczne aplikacje przedstawionej tutaj metodologii i wszelkie wątpliwości zostaną rozwiane (a przynajmniej taka jest nadzieja autorów).
 
 ### Metody wirtualne
 Jak widzieliśmy w zadaniach 9. i  10., gdy patrzyliśmy na obiekt przez pryzmat typu, po którym dziedziczy (tzn. uzyskując do niego dostęp przez referencję lub wskaźnik typu bazowego), nie mieliśmy możliwości dostania się do pól i metod tego obiektu pochodzących z jego faktycznej klasy.
@@ -151,9 +156,9 @@ Jest to zupełnie logiczne - wolnostojącą funkcję `id` moglibyśmy napisać o
 `id(const Figura&)` zawoła wtedy metodę `id` klasy `Figura` - żadna inna klasa jeszcze nie istnieje.
 Naszym celem w tym rozdziale jest przedstawienie sposobu, który pozwoliłby oddalić decyzję o metodzie, która zostanie zawołana, do momentu wykonania programu.
 Możemy wtedy zawołać metodę nie klasy `Figura`, ale klasy obiektu, do którego referencja `const Figura&` tak naprawdę się odnosi.
-Mechanizmem w C\+\+, który do tego służy, jest słowo kluczowe `virtual`.
+Mechanizmem w C++, który do tego służy, jest słowo kluczowe `virtual`.
 Klasę, która posiada choć jedną metodę oznaczoną tym słowem nazywamy klasą polimorficzną.
-W reprezentacji obiektu takiej klasy, kompilator tworzy dodatkowo strukturę danych (*vpointer*), która zawiera w sobie informację o "prawdziwym" typie danego obiektu (a dokładniej mówiąc, wskazuje miejsce, w którym zapisane jest "prawdziwe" zachowanie obiektu, o szczegółach można przeczytać np. [tutaj](https://pabloariasal.github.io/2017/06/10/understanding-virtual-tables/)).
+W reprezentacji obiektu takiej klasy, kompilator tworzy dodatkowy wskaźnik (*vpointer*), który wskazuje na "prawdziwy" typ danego obiektu (a dokładniej mówiąc, wskazuje miejsce, w którym zapisane jest "prawdziwe" zachowanie obiektu, tzw. *vtable*, o szczegółach można przeczytać np. [tutaj](https://pabloariasal.github.io/2017/06/10/understanding-virtual-tables/)).
 
 #### Zadanie 11
 Oznacz metodę `id` klasy `Figura` jako wirtualną.
@@ -181,10 +186,12 @@ Może to doprowadzić do wycieku zasobów i innych nieprzyjemnych sytuacji.
 #### Zadanie 13
 Zdefiniuj dla stworzonych dotychczas klas destruktor, drukujący informację o zniszczeniu obiektu.
 Zawołaj w funkcji `main`
+
 ```C++
 Figura* f = new Kwadrat{/* ... */};
 delete f;
 ```
+
 Które destruktory zostały zawołane?
 Jak zmieni się sytuacja, gdy uczynisz destruktory wirtualnymi?
 
@@ -194,6 +201,7 @@ Metody abstrakcyjne (zwane też czysto wirtualnymi) to metody, które musimy nad
 Klasy posiadające takie metody nazywamy abstrakcyjnymi.
 Nie wolno nam bezpośrednio instancjonować klas abstrakcyjnych, ale możemy oczywiście tworzyć obiekty typów dziedziczących po typach abstrakcyjnych.
 Metody abstrakcyjne oznaczamy następująco:
+
 ```C++
 class C
 {
@@ -245,8 +253,17 @@ Napisz klasę `FabrykaFigur` i przeciąż dla niej operator `()` tak, aby jego s
 Jeżeli podanym stringiem jest "kwadrat", niech operator nawiasów konstruuje przy pomocy podanej liczby kwadrat, a jeżeli podano "kolo", niech konstruuje koło.
 W innym przypadku zwróć `nullptr`.
 
+W taki sposób możemy decydować o typie tworzonych obiektów dopiero w czasie wykonania programu.
+Nic nie stoi na przeszkodzie, aby argument podawany do fabryki figur był np. wczytywany z klawiatury lub pobierany z sieci.
+
 ### Wizytator
-Wizytator to jeden z częściej stosowanych *design pattern* w C\+\+.
+> Wizytator stanowi nieco bardziej zaawansowany przykład zastosowania polimorfizmu.
+Poznanie go nie jest niezbędne do kontynuowania bieżącego kursu.
+Czytelnik powinien w pierwszej kolejności skupić się na solidnym zrozumieniu treści zawartej wyżej.
+Niemniej jednak, zagadnienie iteracji po elementach różnych typów pojawia się powszechnie i, zdaniem autorów, warto wiedzieć po jakie rozwiązania sięgnąć, gdy taki problem się napotka.
+Więcej informacji nt. wizytatora dostępne jest np. w [artykule na wikipedii](https://en.wikipedia.org/wiki/Visitor_pattern#C++_example), napisanym w dość zrozumiały sposób.
+
+Wizytator to jeden z częściej stosowanych schematów projektowych (ang. *design pattern*) w C++.
 Mając dany wskaźnik do obiektu polimorficznego, chcielibyśmy potrafić wykonać na nim różne operacje w zależności od typu obiektu, na który "tak naprawdę" wskazuje.
 Mając dany kontener takich wskaźników, chcielibyśmy móc się po nim odpowiednio przeiterować.
 Zacznijmy od prostych rzeczy.
@@ -299,6 +316,3 @@ Osiągnęliśmy zatem to, co chcieliśmy - możemy dokonywać na trzymanych figu
 #### Zadanie 27
 Przetestuj działanie napisanego kodu.
 Jeżeli masz wątpliwości, że jest ono w pełni dynamiczne, możesz uzależnić typ wkładanych do kontenera figur od wejścia z konsoli (pomocna będzie do tego fabryka).
-Jeżeli nie rozumiesz w pełni działania schematu projektowego wizytatora, nie przejmuj się.
-Stanowi on dość zaawansowany przykład wykorzystania dynamicznego polimorfizmu w C\+\+.
-Możesz poczytać o nim więcej, np. [artykuł na wikipedii](https://en.wikipedia.org/wiki/Visitor_pattern#C++_example) napisany jest w dość zrozumiały sposób.
